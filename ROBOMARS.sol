@@ -1,17 +1,5 @@
 /**
- *Submitted for verification at BscScan.com on 2021-05-20
-*/
-
-/**
- *Submitted for verification at BscScan.com on 2021-03-01
-*/
-
-/**
- *Submitted for verification at BscScan.com on 2021-03-01
-*/
-
-/**
-   #BARMY features:
+   #ROBOMARS features:
    4% fee auto add to the liquidity pool to locked forever when selling
    5% fee auto distribute to all holders
    1% will be given BSC Army members under Meme Bounty function
