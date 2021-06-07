@@ -2,7 +2,7 @@
    #ROBOMARS features:
    4% fee auto add to the liquidity pool to locked forever when selling
    5% fee auto distribute to all holders
-   1% will be given BSC Army members under Meme Bounty function
+   1% will be given charity foundation
    1/3 Supply is burned at start.
    
  */
@@ -714,7 +714,10 @@ contract ROBOMARS is Context, IERC20, Ownable {
     
     uint256 public _liquidityFee = 4;
     uint256 private _previousLiquidityFee = _liquidityFee;
+
     address public _charityFoundation = 0xE673451e7A98508e5f02D5deE932b74D7b884247;
+    uint256 public _charity = 1;
+    uint256 private _previousCharity = _charity;
   
     
     IUniswapV2Router02 public immutable uniswapV2Router;
@@ -898,6 +901,10 @@ contract ROBOMARS is Context, IERC20, Ownable {
     function setTaxFeePercent(uint256 taxFee) external onlyOwner() {
         _taxFee = taxFee;
     }
+
+    function setCharityPercent(uint256 charity) external onlyOwner() {
+        _charity = charity;
+    }
     
     function setCharityFoundation(address charityFoundation) external onlyOwner() {
         _charityFoundation = charityFoundation;
@@ -918,7 +925,7 @@ contract ROBOMARS is Context, IERC20, Ownable {
         emit SwapAndLiquifyEnabledUpdated(_enabled);
     }
     
-     //to recieve ETH from uniswapV2Router when swaping
+    //to recieve ETH from uniswapV2Router when swaping
     receive() external payable {}
 
     function _reflectFee(uint256 rFee, uint256 tFee) private {
@@ -934,13 +941,13 @@ contract ROBOMARS is Context, IERC20, Ownable {
 
     function _getTValues(uint256 tAmount) private view returns (uint256, uint256, uint256, uint256) {
         uint256 tFee = calculateTaxFee(tAmount);
-        uint256 tCharity = calculateArmyReward(tAmount);
+        uint256 tCharity = calculateCharity(tAmount);
         uint256 tLiquidity = calculateLiquidityFee(tAmount);
         uint256 tTransferAmount = tAmount.sub(tFee).sub(tLiquidity);
         return (tTransferAmount, tFee, tCharity, tLiquidity);
     }
 
-    function _getRValues(uint256 tAmount, uint256 tFee, uint256 tCharity, uint256 tLiquidity, uint256 currentRate) private pure returns (RVal memory) {
+    function _getRValues(uint256 tAmount, uint256 tFee, uint256 tCharity, uint256 tLiquidity, uint256 currentRate) private pure returns (RoboVal memory) {
         RoboVal memory rVal;
         rVal.rAmount = tAmount.mul(currentRate);
         rVal.rFee = tFee.mul(currentRate);
@@ -981,6 +988,12 @@ contract ROBOMARS is Context, IERC20, Ownable {
         );
     }   
 
+    function calculateCharity(uint256 _amount) private view returns (uint256) {
+        return _amount.mul(_charity).div(
+            10**2
+        );
+    }
+
     function calculateLiquidityFee(uint256 _amount) private view returns (uint256) {
         return _amount.mul(_liquidityFee).div(
             10**2
@@ -988,17 +1001,20 @@ contract ROBOMARS is Context, IERC20, Ownable {
     }
     
     function removeAllFee() private {
-        if(_taxFee == 0 && _liquidityFee == 0) return;
+        if(_taxFee == 0 && _liquidityFee == 0 && _charity == 0) return;
         
-        _previousTaxFee = _taxFee;        
+        _previousTaxFee = _taxFee;     
+        _previousCharity = _charity;   
         _previousLiquidityFee = _liquidityFee;
         
         _taxFee = 0;
-        _liquidityFee = 0;     
+        _liquidityFee = 0;   
+        _charity = 0;  
     }
     
     function restoreAllFee() private {
-        _taxFee = _previousTaxFee;     
+        _taxFee = _previousTaxFee;   
+        _charity = _previousCharity;  
         _liquidityFee = _previousLiquidityFee;
     }
     
