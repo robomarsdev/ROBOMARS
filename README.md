@@ -14,5 +14,5 @@ Robomars is a collection of animated digital characters with varying scarcities.
 - Web : https://robomars.io
 - Telegram : https://t.me/robomars_ann
 - Twitter :  https://twitter.com/robomars.io
-- Medium : 
+- Medium : https://robomars-io.medium.com
 - Chart : 
